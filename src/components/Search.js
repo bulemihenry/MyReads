@@ -14,7 +14,10 @@ const Search = () => {
   useEffect(() => {
     (async () => {
       try {
-        const searchresults = await BooksAPI.search(inputed.trim());
+        const searchresponse = await BooksAPI.search(inputed.trim());
+        const searchresults = searchresponse.filter(
+          (res) => res.imageLinks.thumbnail !== null
+        );
         if (!inputed) {
           setSearched([]);
         } else {
