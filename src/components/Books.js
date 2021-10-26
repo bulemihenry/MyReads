@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+
 import { Link } from "react-router-dom";
 import * as BooksAPI from "../BooksAPI";
+//import Book from "./Book";
 import BookShelf from "./Bookshelf";
+import Search from "./Search";
 
-function Books() {
-  const [showSearchPage, setshowSearchPage] = useState(false);
+function Books({ shelves }) {
   const [read, setRead] = useState([]);
   const [currentlyR, setCurrentlyR] = useState([]);
   const [wanttoR, setWanttoR] = useState([]);
@@ -17,25 +19,21 @@ function Books() {
    * pages, as well as provide a good URL they can bookmark and share.
    */
   useEffect(() => {
-    // BooksAPI.getAll().then((data) => {
-    //   console.log(data);
-    // });
     (async () => {
-      const response = await BooksAPI.getAll();
-      const readresult = response.filter(
+      const readresult = shelves.filter(
         (readread) => readread.shelf === "read"
       );
       setRead(readresult);
-      const currentresult = response.filter(
+      const currentresult = shelves.filter(
         (currentcurrent) => currentcurrent.shelf === "currentlyReading"
       );
       setCurrentlyR(currentresult);
-      const wanttoresult = response.filter(
+      const wanttoresult = shelves.filter(
         (wantread) => wantread.shelf === "wantToRead"
       );
       setWanttoR(wanttoresult);
     })();
-  }, [setRead, setCurrentlyR, setWanttoR, shelf1]);
+  }, [shelves]);
 
   const moveBook = async (book, shelf) => {
     const updateShelf = await BooksAPI.update(book, shelf);
@@ -65,7 +63,7 @@ function Books() {
           </div>
         </div>
         <div className="open-search">
-          <Link to="/Search">
+          <Link to={"/Search"}>
             <button>Add a book</button>
           </Link>
         </div>

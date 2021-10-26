@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Book from "./Book";
 import * as BooksAPI from "../BooksAPI";
 
-const Search = () => {
+const Search = ({ shelves }) => {
   const [inputed, setInputed] = useState("");
   const [searched, setSearched] = useState([]);
-  const [shelf1, setShelf] = useState("");
+
   const handleChange = (e) => {
     const inputdata = e.target.value;
     setInputed(inputdata);
@@ -14,29 +14,29 @@ const Search = () => {
   useEffect(() => {
     (async () => {
       try {
-        const searchresponse = await BooksAPI.search(inputed.trim());
-        const searchresults = searchresponse.filter(
-          (res) => res.imageLinks.thumbnail !== null
-        );
-        if (!inputed) {
-          setSearched([]);
-        } else {
-          if (searchresults.error) {
-            setSearched([]);
-          } else {
-            setSearched(searchresults);
-          }
-        }
+        const searchresults = await BooksAPI.search(inputed.trim());
+
+        const result =
+          searchresults && !searchresults.error
+            ? searchresults.map((book) => {
+                const book1 = shelves.find((item) => item.id === book.id);
+
+                if (book1) {
+                  book.shelf = book1.shelf;
+                  return book;
+                }
+                return book;
+              })
+            : [];
+        setSearched(result);
       } catch (err) {
         console.log(err);
       }
     })();
   }, [inputed]);
-  console.log(searched);
 
   const moveBook = async (book, shelf) => {
     const updateShelf = await BooksAPI.update(book, shelf);
-    setShelf(updateShelf); // for re-rendering
   };
 
   return (

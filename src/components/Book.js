@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react/cjs/react.development";
+import { useState } from "react";
 
 const Book = ({ book, moveBook }) => {
   return (
@@ -11,7 +11,9 @@ const Book = ({ book, moveBook }) => {
             style={{
               width: 128,
               height: 193,
-              backgroundImage: `url(${book.imageLinks.thumbnail})`,
+              backgroundImage: `url(${
+                book.imageLinks ? book.imageLinks.thumbnail : ""
+              })`,
             }}
           />
           <div className="book-shelf-changer">
